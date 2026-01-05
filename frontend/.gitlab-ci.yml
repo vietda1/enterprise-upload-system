@@ -1,0 +1,53 @@
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  DOCKER_REGISTRY: registry.gitlab.com/yourgroup/enterprise-upload
+  IMAGE_NAME: frontend
+
+test:
+  stage: test
+  image: node:18-alpine
+  script:
+    - npm ci
+    - npm run lint
+    - npm test
+  only:
+    - merge_requests
+    - main
+
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHA .
+    - docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:latest .
+    - docker push $DOCKER_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHA
+    - docker push $DOCKER_REGISTRY/$IMAGE_NAME:latest
+  only:
+    - main
+
+deploy-staging:
+  stage: deploy
+  script:
+    - echo "Deploy to staging"
+    - ssh user@staging-server "docker pull $DOCKER_REGISTRY/$IMAGE_NAME:latest"
+    - ssh user@staging-server "docker-compose up -d frontend"
+  only:
+    - main
+  when: manual
+
+deploy-production:
+  stage: deploy
+  script:
+    - echo "Deploy to production"
+    - ssh user@prod-server "docker pull $DOCKER_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHA"
+    - ssh user@prod-server "docker-compose up -d frontend"
+  only:
+    - main
+  when: manual
