@@ -184,4 +184,3 @@ Check:
 ## License
 
 Proprietary - Enterprise License
-git remote set-url origin https://vietda1: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@github.com/vietda1/enterprise-upload-system.git
