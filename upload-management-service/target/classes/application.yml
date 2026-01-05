@@ -1,0 +1,51 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: upload-management-service
+  
+  datasource:
+    url: jdbc:postgresql://postgres:5432/upload_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  
+  kafka:
+    bootstrap-servers: kafka:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+minio:
+  url: http://minio:9000
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket-name: enterprise-uploads
+  presigned-url-expiry: 3600
+
+dataset:
+  configs:
+    - type: CSV_TRANSACTION
+      name: Transaction Data
+      default-database: postgresql://transaction-db:5432/transactions
+      validation-rules:
+        - required-columns: [transaction_id, amount, date]
+    - type: JSON_USER_PROFILE
+      name: User Profile Data
+      default-database: mongodb://mongo:27017/users
+      validation-rules:
+        - required-fields: [user_id, email]
+    - type: PARQUET_ANALYTICS
+      name: Analytics Data
+      default-database: clickhouse://clickhouse:8123/analytics
+      validation-rules:
+        - schema-validation: true
