@@ -1,27 +1,26 @@
 package com.enterprise.upload.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
+@Data
 public class UploadMetadata {
-
+    
     @NotBlank(message = "Department is required")
     private String department;
-
+    
     @NotBlank(message = "Access level is required")
     private String accessLevel;
-
+    
     @NotBlank(message = "Dataset type is required")
     private String datasetType;
-
+    
     @NotBlank(message = "Target database is required")
     private String targetDatabase;
-
+    
     private String[] tags;
     private String description;
-
-    @NotNull(message = "Auto-ingest flag must be specified")
-    private Boolean autoIngest;
+    private Boolean autoIngest = false;
 
     // --- Getters and Setters ---
 

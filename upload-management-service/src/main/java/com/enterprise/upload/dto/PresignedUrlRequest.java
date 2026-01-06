@@ -1,8 +1,11 @@
 package com.enterprise.upload.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
+@Data
 public class PresignedUrlRequest {
     
     @NotBlank(message = "File name is required")
@@ -12,6 +15,7 @@ public class PresignedUrlRequest {
     private String fileType;
     
     @NotNull(message = "Metadata is required")
+    @Valid
     private UploadMetadata metadata;
     
     // Getters and Setters
