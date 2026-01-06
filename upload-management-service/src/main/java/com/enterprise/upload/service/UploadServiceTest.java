@@ -35,6 +35,7 @@ class UploadServiceTest {
     
     private PresignedUrlRequest request;
     private Upload upload;
+    private String testId = "test-id";
     
     @BeforeEach
     void setUp() {
@@ -52,7 +53,7 @@ class UploadServiceTest {
         request.setMetadata(metadata);
         
         upload = new Upload();
-        upload.setId("test-id");
+        upload.setId(testId);
         upload.setUserId("user-123");
         upload.setFileName("test.csv");
         upload.setStatus(UploadStatus.PENDING);
@@ -82,7 +83,7 @@ class UploadServiceTest {
     @Test
     void testConfirmUpload() {
         // Arrange
-        when(uploadRepository.findById("test-id"))
+        when(uploadRepository.findById(testId))
             .thenReturn(Optional.of(upload));
         when(minioService.objectExists(anyString()))
             .thenReturn(true);
@@ -93,7 +94,7 @@ class UploadServiceTest {
             .thenReturn(stat);
         
         // Act
-        uploadService.confirmUpload("test-id");
+        uploadService.confirmUpload(testId);
         
         // Assert
         assertEquals(UploadStatus.UPLOADED, upload.getStatus());

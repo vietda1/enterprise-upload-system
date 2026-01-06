@@ -8,6 +8,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 
+class MinioOperationException extends RuntimeException {
+    public MinioOperationException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}
+
 @Service
 @Slf4j
 public class MinioService {
@@ -51,7 +57,7 @@ public class MinioService {
             }
         } catch (Exception e) {
             log.error("Failed to create bucket", e);
-            throw new RuntimeException("Failed to create bucket", e);
+            throw new MinioOperationException("Failed to create bucket", e);
         }
     }
     
@@ -67,7 +73,7 @@ public class MinioService {
             );
         } catch (Exception e) {
             log.error("Failed to generate presigned URL for object: {}", objectKey, e);
-            throw new RuntimeException("Failed to generate presigned URL", e);
+            throw new MinioOperationException("Failed to generate presigned URL", e);
         }
     }
     
@@ -81,7 +87,7 @@ public class MinioService {
             );
         } catch (Exception e) {
             log.error("Failed to get object metadata: {}", objectKey, e);
-            throw new RuntimeException("Failed to get object metadata", e);
+            throw new MinioOperationException("Failed to get object metadata", e);
         }
     }
     
@@ -96,7 +102,7 @@ public class MinioService {
             log.info("Object deleted: {}", objectKey);
         } catch (Exception e) {
             log.error("Failed to delete object: {}", objectKey, e);
-            throw new RuntimeException("Failed to delete object", e);
+            throw new MinioOperationException("Failed to delete object", e);
         }
     }
     
@@ -126,7 +132,7 @@ public class MinioService {
             );
         } catch (Exception e) {
             log.error("Failed to generate download URL: {}", objectKey, e);
-            throw new RuntimeException("Failed to generate download URL", e);
+            throw new MinioOperationException("Failed to generate download URL", e);
         }
     }
 }
