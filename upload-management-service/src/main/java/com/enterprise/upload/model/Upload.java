@@ -1,60 +1,85 @@
 package com.enterprise.upload.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 
 @Entity
-@Table(name = "uploads")
+@Table(name = "uploads", indexes = {
+    @Index(name = "idx_user_id", columnList = "userId"),
+    @Index(name = "idx_status", columnList = "status"),
+    @Index(name = "idx_department", columnList = "department"),
+    @Index(name = "idx_created_at", columnList = "createdAt")
+})
+@EntityListeners(AuditingEntityListener.class)
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Upload {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(length = 36)
     private String id;
     
     @Column(nullable = false)
     private String userId;
     
-    @Column(nullable = false)
+    @Column(nullable = false, length = 500)
     private String fileName;
     
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String fileType;
     
-    @Column(nullable = false)
+    @Column
     private Long fileSize;
     
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String objectKey;
     
     @Column(nullable = false)
     private String bucketName;
     
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private UploadStatus status;
     
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String department;
     
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private AccessLevel accessLevel;
     
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String datasetType;
     
-    @Column(nullable = false)
+    @Column(nullable = false, length = 500)
     private String targetDatabase;
     
-    @ElementCollection
-    @CollectionTable(name = "upload_metadata", joinColumns = @JoinColumn(name = "upload_id"))
-    @MapKeyColumn(name = "meta_key")
-    @Column(name = "meta_value")
-    private Map<String, String> metadata;
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(
+        name = "upload_metadata",
+        joinColumns = @JoinColumn(name = "upload_id")
+    )
+    @MapKeyColumn(name = "meta_key", length = 255)
+    @Column(name = "meta_value", columnDefinition = "TEXT")
+    private Map<String, String> metadata = new HashMap<>();
     
-    @Column(nullable = false)
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
+    
+    @LastModifiedDate
+    @Column
+    private LocalDateTime updatedAt;
     
     @Column
     private LocalDateTime uploadedAt;
@@ -65,11 +90,17 @@ public class Upload {
     @Column
     private LocalDateTime ingestedAt;
     
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String validationResult;
     
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String ingestionResult;
+    
+    @Column(length = 500)
+    private String errorMessage;
+    
+    @Version
+    private Long version;
     
     // Getters and Setters
     public String getId() { return id; }
@@ -127,5 +158,8 @@ public class Upload {
     public void setValidationResult(String validationResult) { this.validationResult = validationResult; }
 
     public String getIngestionResult() { return ingestionResult; }
-    public void setIngestionResult(String ingestionResult) { this.ingestionResult = ingestionResult; }  
+    public void setIngestionResult(String ingestionResult) { this.ingestionResult = ingestionResult; } 
+    
+    public String getErrorMessage() { return errorMessage; }
+    public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }                          
 }

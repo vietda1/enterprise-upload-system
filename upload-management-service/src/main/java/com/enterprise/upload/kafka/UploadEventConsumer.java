@@ -1,6 +1,5 @@
 package com.enterprise.upload.kafka;
 
-import com.enterprise.upload.model.Upload;
 import com.enterprise.upload.model.UploadStatus;
 import com.enterprise.upload.repository.UploadRepository;
 import lombok.RequiredArgsConstructor;
