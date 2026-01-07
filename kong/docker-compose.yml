@@ -1,0 +1,45 @@
+version: '2.1'
+
+services:
+  kong-database:
+    # Dùng bản Postgres cũ hơn một chút để tránh lỗi Manifest
+    image: postgres:9.6-alpine
+    environment:
+      POSTGRES_USER: kong
+      POSTGRES_DB: kong
+      POSTGRES_PASSWORD: kongpass
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "kong"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kong-migrations:
+    # Dùng đúng bản 2.0.4 bạn vừa tải được
+    image: kong:2.0.4-alpine
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_PASSWORD: kongpass
+    command: kong migrations bootstrap
+    depends_on:
+      kong-database:
+        condition: service_healthy
+
+  kong:
+    # Dùng đúng bản 2.0.4 bạn vừa tải được
+    image: kong:2.0.4-alpine
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_PASSWORD: kongpass
+      KONG_PROXY_LISTEN: 0.0.0.0:8000
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+    depends_on:
+      kong-database:
+        condition: service_healthy
