@@ -1,0 +1,46 @@
+1. Khai báo services
+curl -i -X POST http://localhost:8001/services \
+  --data name=upload-service \
+  --data url=http://localhost:8080
+
+
+curl -i -X POST http://localhost:8001/services \
+  --data name=user-service \
+  --data url=http://localhost:8081
+
+curl -i -X POST http://localhost:8001/services \
+  --data name=validation-service \
+  --data url=http://localhost:8000
+
+curl -i -X POST http://localhost:8001/services \
+  --data name=ingest-service \
+  --data url=http://localhost:8001
+
+# Route cho upload API
+curl -i -X POST http://localhost:8001/services/upload-service/routes \
+  --data 'paths[]=/upload-service' \
+  --data 'strip_path=true' \
+  --data 'name=upload-route'
+
+
+# Route cho presigned URL
+curl -i -X POST http://localhost:8001/services/upload-service/routes \
+  --data 'paths[]=/api/v1/uploads' \
+  --data 'strip_path=false' \
+  --data 'name=upload-api-route'
+
+
+{"custom_id":null,"created_at":1767883201,"id":"633bf510-5121-4c09-b6a1-ae7f7d783197","tags":null,"username":"test-user"}
+
+{"rsa_public_key":null,"created_at":1767883272,"consumer":{"id":"633bf510-5121-4c09-b6a1-ae7f7d783197"},"id":"595b651f-b798-4ecb-a78b-8dec2b93b96e","tags":null,"key":"554QK16bxZbSZqXZo9ej4fiPyRiIXuJh","secret":"my-secret-key","algorithm":"HS256"}
+
+JWT Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI1NTRRSzE2YnhaYlNacVhabzllajRmaVB5UmlJWHVKaCIsImV4cCI6MTc2Nzk3MTYxMSwiaWF0IjoxNzY3ODg1MjExLCJzdWIiOiJ0ZXN0LXVzZXIiLCJ1c2VySWQiOiJ1c2VyLTEyMyIsImRlcGFydG1lbnQiOiJmaW5hbmNlIn0.8_yuE9yGby4Z3VMSBnNgbADWQ4JzHGEx0H3MFa7
+bUjw
+
+
+
+curl -i http://localhost:8000/api/v1/uploads/stats \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI1NTRRSzE2YnhaYlNacVhabzllajRmaVB5UmlJWHVKaCIsImV4cCI6MTc2Nzk3MTYxMSwiaWF0IjoxNzY3ODg1MjExLCJzdWIiOiJ0ZXN0LXVzZXIiLCJ1c2VySWQiOiJ1c2VyLTEyMyIsImRlcGFydG1lbnQiOiJmaW5hbmNlIn0.8_yuE9yGby4Z3VMSBnNgbADWQ4JzHGEx0H3MFa7
+bUjw"
+
+curl -X GET http://localhost:8001/consumers/test-user/jwt
