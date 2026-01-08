@@ -3,7 +3,7 @@ export const API_CONFIG = {
     SERVICES: {
       UPLOAD: '/upload-service',
       USER: '/user-service',
-      VALIDATE: '/validate-service',
+      VALIDATE: '/validation-service',
       INGEST: '/ingest-service'
     },
     TIMEOUT: 30000
