@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  validation-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: validation-service
+    ports:
+      - "8002:8000"
+    environment:
+      - ENVIRONMENT=development
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - MINIO_ENDPOINT=minio:9000
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=upload_db
+    volumes:
+      - ./app:/app/app
+      - ./logs:/app/logs
+    networks:
+      - enterprise-network
+    depends_on:
+      - postgres
+      - kafka
+      - minio
+    restart: unless-stopped
+
+networks:
+  enterprise-network:
+    external: true
