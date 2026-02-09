@@ -31,33 +31,33 @@ async def lifespan(app: FastAPI):
     logger.info("Database initialized")
     
     # Start Kafka consumer in background thread
-    kafka_service = KafkaService()
-    kafka_service.create_consumer()
-    kafka_service.create_producer()
+    #kafka_service = KafkaService()
+    #kafka_service.create_consumer()
+    #kafka_service.create_producer()
     
     # Create MinIO client
-    minio_client = Minio(
+    """ minio_client = Minio(
         settings.minio_endpoint,
         access_key=settings.minio_access_key,
         secret_key=settings.minio_secret_key,
         secure=settings.minio_secure
-    )
+    ) """
     
     # Start consumer thread
     def consume_events():
         def handle_upload_event(event: dict):
             db = SessionLocal()
             try:
-                validation_service = ValidationService(db, minio_client, kafka_service)
-                validation_service.validate_upload(
+                #validation_service = ValidationService(db, minio_client, kafka_service)
+                """ validation_service.validate_upload(
                     event["uploadId"],
                     event["objectKey"],
                     event["datasetType"]
-                )
+                ) """
             finally:
                 db.close()
         
-        kafka_service.consume_messages(handle_upload_event)
+        #kafka_service.consume_messages(handle_upload_event)
     
     consumer_thread = threading.Thread(target=consume_events, daemon=True)
     consumer_thread.start()
@@ -67,7 +67,7 @@ async def lifespan(app: FastAPI):
     
     # Shutdown
     logger.info("Shutting down...")
-    kafka_service.close()
+    #kafka_service.close()
 
 
 # Create FastAPI app

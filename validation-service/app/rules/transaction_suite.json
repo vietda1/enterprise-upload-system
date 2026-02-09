@@ -1,0 +1,50 @@
+{
+  "expectation_suite_name": "transaction_suite",
+  "expectations": [
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "transaction_id"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "amount",
+        "min_value": 0,
+        "max_value": 1000000
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_strftime_format",
+      "kwargs": {
+        "column": "date",
+        "strftime_format": "%Y-%m-%d"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "status",
+        "value_set": ["PENDING", "COMPLETED", "FAILED", "CANCELLED"]
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "customer_id",
+        "regex": "^CUST-\\d{6}$"
+      }
+    }
+  ],
+  "ge_cloud_id": null,
+  "meta": {
+    "citations": [
+      {
+        "comment": "Created by Gemini for testing purposes",
+        "batch_request": null
+      }
+    ],
+    "great_expectations_version": "0.18.0"
+  }
+}

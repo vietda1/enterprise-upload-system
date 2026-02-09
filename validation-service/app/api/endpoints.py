@@ -1,7 +1,9 @@
+import random
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from typing import List
 from minio import Minio
+from datetime import datetime
 
 from app.database import get_db
 from app.schemas import (
@@ -10,12 +12,13 @@ from app.schemas import (
     ValidationStats,
     ValidationStatus
 )
+from app.models.models import ValidationResult
 from app.services.validation_service import ValidationService
 from app.services.kafka_service import KafkaService
 from app.config import settings
 
 router = APIRouter(prefix="/validations", tags=["Validation"])
-
+ 
 # Dependency to get MinIO client
 def get_minio_client() -> Minio:
     return Minio(
@@ -151,3 +154,32 @@ async def get_validation_stats(db: Session = Depends(get_db)):
         avg_processing_time=round(avg_time, 2),
         success_rate=round(success_rate, 2)
     )
+
+#fake test
+@router.post("/test-create-validation", response_model=ValidationResultResponse)
+async def create_fake_validation(request: ValidationRequest, db: Session = Depends(get_db)):
+    """
+    API dùng để tạo thử một bản ghi validation vào SQLite
+    """
+    # 1. Giả lập một kết quả validation
+    new_validation = {
+        "id": random.randint(1, 100), # <--- Thêm dòng này để thỏa mãn Pydantic Schema
+        "upload_id": request.upload_id,
+        "dataset_type": request.dataset_type,
+        "status": ValidationStatus.VALID,
+        "row_count": random.randint(100, 1000),
+        "column_count": 10,
+        "file_size_mb": 1.5,
+        "schema_valid": True,
+        "data_quality_score": 95,
+        "created_at": datetime.now()
+    }
+    
+    # 2. Lưu vào Database (Chúng ta cần gọi đến SQLAlchemy Model ở đây)
+    # Lưu ý: Bạn cần import Model từ app.models (ví dụ ValidationResult)
+    db_item = ValidationResult(**new_validation)
+    db.add(db_item)
+    db.commit()
+    db.refresh(db_item)
+    
+    return new_validation

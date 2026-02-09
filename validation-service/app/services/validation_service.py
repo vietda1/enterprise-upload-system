@@ -35,21 +35,21 @@ class ValidationService:
             upload_id=upload_id,
             status=ValidationStatus.VALIDATING.value,
             dataset_type=dataset_type,
-            created_at=datetime.utcnow(),
-            started_at=datetime.utcnow(),
+            created_at=datetime.now(datetime.timezone.utc),
+            started_at=datetime.now(datetime.timezone.utc),
             validator_version=settings.app_version
         )
         self.db.add(validation)
         self.db.commit()
         
-        start_time = datetime.utcnow()
+        start_time = datetime.now(datetime.timezone.utc),
         
         try:
             # Perform validation
             result = self.file_validator.validate_file(object_key, dataset_type)
             
             # Calculate processing time
-            processing_time = (datetime.utcnow() - start_time).seconds
+            processing_time = (datetime.now(datetime.timezone.utc) - start_time).seconds
             
             # Update validation record
             validation.status = result["status"]
@@ -65,7 +65,7 @@ class ValidationService:
             validation.warnings = result.get("warnings", [])
             validation.validation_summary = result.get("validation_summary", "")
             validation.processing_time_seconds = processing_time
-            validation.completed_at = datetime.utcnow()
+            validation.completed_at = datetime.now(datetime.timezone.utc)
             
             self.db.commit()
             
@@ -79,7 +79,7 @@ class ValidationService:
             
             validation.status = ValidationStatus.ERROR.value
             validation.errors = [str(e)]
-            validation.completed_at = datetime.utcnow()
+            validation.completed_at = datetime.now(datetime.timezone.utc)
             self.db.commit()
             
             self._publish_validation_result(upload_id, ValidationStatus.ERROR.value, {"errors": [str(e)]})
@@ -91,7 +91,7 @@ class ValidationService:
             "status": status,
             "dataQualityScore": result.get("data_quality_score", 0),
             "errors": result.get("errors", []),
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(datetime.timezone.utc).isoformat()
         }
         
         self.kafka_service.publish_message(
