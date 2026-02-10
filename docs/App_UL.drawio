@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36" version="29.3.4" pages="10">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36" version="29.3.8" pages="10">
   <diagram id="TnQpZU1XWYX-aauYU0OK" name="CJ">
     <mxGraphModel dx="2276" dy="819" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -2024,7 +2024,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="lVqZHyl1obz8-hXtyw32" name="CJ-NEW">
-    <mxGraphModel dx="1678" dy="964" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1426" dy="785" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -2032,7 +2032,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="2YIYJlZecpgpTJlY-CaM-57" parent="1" style="swimlane;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontal=1;startSize=20;horizontalStack=0;html=1;" value="&lt;span style=&quot;font-size: 14px;&quot;&gt;Luồng hành trình người dùng Upload dữ liệu&lt;/span&gt;" vertex="1">
-          <mxGeometry height="630" width="1160" x="40" y="100" as="geometry" />
+          <mxGeometry height="630" width="1020" x="40" y="100" as="geometry" />
         </mxCell>
         <mxCell id="2YIYJlZecpgpTJlY-CaM-110" edge="1" parent="2YIYJlZecpgpTJlY-CaM-57" source="2YIYJlZecpgpTJlY-CaM-63" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="2YIYJlZecpgpTJlY-CaM-66">
           <mxGeometry relative="1" as="geometry" />
@@ -2041,7 +2041,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="2YIYJlZecpgpTJlY-CaM-58" parent="2YIYJlZecpgpTJlY-CaM-57" style="swimlane;startSize=20;horizontal=0;html=1;" value="USER MAKER" vertex="1">
-          <mxGeometry height="160" width="1160" y="20" as="geometry" />
+          <mxGeometry height="160" width="1020" y="20" as="geometry" />
         </mxCell>
         <mxCell id="2YIYJlZecpgpTJlY-CaM-62" parent="2YIYJlZecpgpTJlY-CaM-58" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Login" vertex="1">
           <mxGeometry height="40" width="80" x="38" y="30" as="geometry" />
@@ -2074,7 +2074,7 @@
           <mxGeometry height="40" width="80" x="640" y="30" as="geometry" />
         </mxCell>
         <mxCell id="2YIYJlZecpgpTJlY-CaM-59" parent="2YIYJlZecpgpTJlY-CaM-57" style="swimlane;startSize=20;horizontal=0;html=1;" value="USER CHECKER" vertex="1">
-          <mxGeometry height="140" width="1160" y="180" as="geometry" />
+          <mxGeometry height="140" width="1020" y="180" as="geometry" />
         </mxCell>
         <mxCell id="2YIYJlZecpgpTJlY-CaM-108" edge="1" parent="2YIYJlZecpgpTJlY-CaM-59" source="2YIYJlZecpgpTJlY-CaM-86" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;">
           <mxGeometry relative="1" as="geometry">
@@ -2100,7 +2100,7 @@
           <mxGeometry height="40" width="80" x="760" y="30" as="geometry" />
         </mxCell>
         <mxCell id="2YIYJlZecpgpTJlY-CaM-60" parent="2YIYJlZecpgpTJlY-CaM-57" style="swimlane;startSize=20;horizontal=0;html=1;" value="SYSTEM" vertex="1">
-          <mxGeometry height="310" width="1160" y="320" as="geometry" />
+          <mxGeometry height="310" width="1020" y="320" as="geometry" />
         </mxCell>
         <mxCell id="2YIYJlZecpgpTJlY-CaM-63" parent="2YIYJlZecpgpTJlY-CaM-60" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Authen&lt;div&gt;Authorize&lt;/div&gt;" vertex="1">
           <mxGeometry height="40" width="80" x="38" y="49" as="geometry" />
@@ -2157,10 +2157,10 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="2YIYJlZecpgpTJlY-CaM-81" parent="2YIYJlZecpgpTJlY-CaM-60" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Tải dữ liệu vào DB" vertex="1">
-          <mxGeometry height="40" width="80" x="1050" y="49" as="geometry" />
+          <mxGeometry height="40" width="80" x="922" y="49" as="geometry" />
         </mxCell>
         <mxCell id="2YIYJlZecpgpTJlY-CaM-83" parent="2YIYJlZecpgpTJlY-CaM-60" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.start_1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" value="End" vertex="1">
-          <mxGeometry height="50" width="80" x="1050" y="248" as="geometry" />
+          <mxGeometry height="50" width="80" x="922" y="248" as="geometry" />
         </mxCell>
         <mxCell id="2YIYJlZecpgpTJlY-CaM-119" edge="1" parent="2YIYJlZecpgpTJlY-CaM-60" source="2YIYJlZecpgpTJlY-CaM-134" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="2YIYJlZecpgpTJlY-CaM-81">
           <mxGeometry relative="1" as="geometry">
@@ -2172,22 +2172,22 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="2YIYJlZecpgpTJlY-CaM-122" edge="1" parent="2YIYJlZecpgpTJlY-CaM-60" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="2YIYJlZecpgpTJlY-CaM-121">
+        <mxCell id="2YIYJlZecpgpTJlY-CaM-122" edge="1" parent="2YIYJlZecpgpTJlY-CaM-60" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" target="2YIYJlZecpgpTJlY-CaM-121">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="800" y="130" />
-              <mxPoint x="1090" y="130" />
+              <mxPoint x="942" y="130" />
             </Array>
             <mxPoint x="799.9999999999995" y="89" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="2YIYJlZecpgpTJlY-CaM-133" connectable="0" parent="2YIYJlZecpgpTJlY-CaM-122" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Từ chối" vertex="1">
           <mxGeometry relative="1" x="-0.198" y="-2" as="geometry">
-            <mxPoint x="13" y="-3" as="offset" />
+            <mxPoint x="33" y="-3" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="2YIYJlZecpgpTJlY-CaM-121" parent="2YIYJlZecpgpTJlY-CaM-60" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Gửi thông báo người dùng" vertex="1">
-          <mxGeometry height="40" width="80" x="1050" y="149" as="geometry" />
+          <mxGeometry height="40" width="80" x="922" y="149" as="geometry" />
         </mxCell>
         <mxCell id="2YIYJlZecpgpTJlY-CaM-134" parent="2YIYJlZecpgpTJlY-CaM-60" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Phê duyệt?" vertex="1">
           <mxGeometry height="60" width="80" x="760" y="38" as="geometry" />
