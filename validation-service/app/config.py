@@ -44,7 +44,8 @@ class Settings(BaseSettings):
     @property
     def database_url(self) -> str:
         """Get database URL"""
-        return f"postgresql://{self.postgres_user}:{self.postgres_password}@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
+        #return f"postgresql://{self.postgres_user}:{self.postgres_password}@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
+        return "sqlite:///./sql_app.db"
     
     class Config:
         env_file = ".env"
