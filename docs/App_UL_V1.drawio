@@ -2618,7 +2618,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="o0MobGbKD-a_2czp8Az0" name="Sequence-NEW">
-    <mxGraphModel dx="1489" dy="849" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="983" dy="574" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -3332,8 +3332,8 @@
             <mxPoint x="545" y="420" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="96i7N0AKoXMaHwO5DTG6-188" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Update trạng thái" vertex="1">
-          <mxGeometry height="30" width="100" x="560" y="395" as="geometry" />
+        <mxCell id="96i7N0AKoXMaHwO5DTG6-188" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Update trạng thái&lt;div&gt;Kiểm tra cờ nhập/duyệt&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="100" x="560" y="405" as="geometry" />
         </mxCell>
         <mxCell id="96i7N0AKoXMaHwO5DTG6-189" edge="1" parent="1" source="96i7N0AKoXMaHwO5DTG6-155" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;dashed=1;dashPattern=1 4;endArrow=none;endFill=0;" target="96i7N0AKoXMaHwO5DTG6-191" value="">
           <mxGeometry relative="1" as="geometry">
