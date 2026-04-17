@@ -18,8 +18,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-04-17T21:10:31+0700",
-    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.46.0.v20260407-0427, environment: Java 21.0.10 (Eclipse Adoptium)"
+    date = "2026-04-17T21:50:06+0700",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.8 (Oracle Corporation)"
 )
 @Component
 public class UploadMapperImpl implements UploadMapper {
@@ -32,34 +32,34 @@ public class UploadMapperImpl implements UploadMapper {
 
         UploadResponse.UploadResponseBuilder uploadResponse = UploadResponse.builder();
 
-        uploadResponse.approvedAt( upload.getApprovedAt() );
-        uploadResponse.approvedBy( upload.getApprovedBy() );
-        uploadResponse.bucketName( upload.getBucketName() );
-        uploadResponse.completedAt( upload.getCompletedAt() );
-        uploadResponse.createdAt( upload.getCreatedAt() );
-        uploadResponse.datasetType( upload.getDatasetType() );
+        uploadResponse.uploadId( upload.getUploadId() );
+        uploadResponse.userId( upload.getUserId() );
         uploadResponse.departmentId( upload.getDepartmentId() );
-        uploadResponse.description( upload.getDescription() );
         uploadResponse.fileName( upload.getFileName() );
+        uploadResponse.originalFileName( upload.getOriginalFileName() );
         uploadResponse.fileSize( upload.getFileSize() );
         uploadResponse.fileType( upload.getFileType() );
         uploadResponse.mimeType( upload.getMimeType() );
         uploadResponse.objectKey( upload.getObjectKey() );
-        uploadResponse.originalFileName( upload.getOriginalFileName() );
-        uploadResponse.presignedUrlExpiresAt( upload.getPresignedUrlExpiresAt() );
-        uploadResponse.rejectedAt( upload.getRejectedAt() );
-        uploadResponse.rejectedBy( upload.getRejectedBy() );
-        uploadResponse.rejectionReason( upload.getRejectionReason() );
-        uploadResponse.status( upload.getStatus() );
+        uploadResponse.bucketName( upload.getBucketName() );
+        uploadResponse.datasetType( upload.getDatasetType() );
+        uploadResponse.targetDatabase( upload.getTargetDatabase() );
+        uploadResponse.targetTable( upload.getTargetTable() );
+        uploadResponse.description( upload.getDescription() );
         Map<String, Object> map = upload.getTags();
         if ( map != null ) {
             uploadResponse.tags( new LinkedHashMap<String, Object>( map ) );
         }
-        uploadResponse.targetDatabase( upload.getTargetDatabase() );
-        uploadResponse.targetTable( upload.getTargetTable() );
+        uploadResponse.status( upload.getStatus() );
+        uploadResponse.rejectionReason( upload.getRejectionReason() );
+        uploadResponse.rejectedBy( upload.getRejectedBy() );
+        uploadResponse.rejectedAt( upload.getRejectedAt() );
+        uploadResponse.approvedBy( upload.getApprovedBy() );
+        uploadResponse.approvedAt( upload.getApprovedAt() );
+        uploadResponse.presignedUrlExpiresAt( upload.getPresignedUrlExpiresAt() );
+        uploadResponse.createdAt( upload.getCreatedAt() );
         uploadResponse.updatedAt( upload.getUpdatedAt() );
-        uploadResponse.uploadId( upload.getUploadId() );
-        uploadResponse.userId( upload.getUserId() );
+        uploadResponse.completedAt( upload.getCompletedAt() );
 
         uploadResponse.uploadTags( extractTags(upload) );
         uploadResponse.latestValidation( mapLatestValidation(upload) );
@@ -77,19 +77,19 @@ public class UploadMapperImpl implements UploadMapper {
         ValidationResultResponse.ValidationResultResponseBuilder validationResultResponse = ValidationResultResponse.builder();
 
         validationResultResponse.tableResults( validationTableResultListToTableResultDetailList( result.getTableResults() ) );
-        validationResultResponse.blockerCount( result.getBlockerCount() );
-        validationResultResponse.completedAt( result.getCompletedAt() );
-        validationResultResponse.durationMs( result.getDurationMs() );
         validationResultResponse.id( result.getId() );
+        validationResultResponse.validationRun( result.getValidationRun() );
         validationResultResponse.qualityScore( result.getQualityScore() );
-        validationResultResponse.startedAt( result.getStartedAt() );
-        validationResultResponse.totalInvalidRows( result.getTotalInvalidRows() );
-        validationResultResponse.totalRows( result.getTotalRows() );
         validationResultResponse.totalTablesFound( result.getTotalTablesFound() );
         validationResultResponse.totalTablesValid( result.getTotalTablesValid() );
+        validationResultResponse.totalRows( result.getTotalRows() );
         validationResultResponse.totalValidRows( result.getTotalValidRows() );
+        validationResultResponse.totalInvalidRows( result.getTotalInvalidRows() );
         validationResultResponse.totalWarnings( result.getTotalWarnings() );
-        validationResultResponse.validationRun( result.getValidationRun() );
+        validationResultResponse.blockerCount( result.getBlockerCount() );
+        validationResultResponse.startedAt( result.getStartedAt() );
+        validationResultResponse.completedAt( result.getCompletedAt() );
+        validationResultResponse.durationMs( result.getDurationMs() );
 
         validationResultResponse.uploadId( result.getUpload().getUploadId() );
         validationResultResponse.overallStatus( result.getOverallStatus() != null ? result.getOverallStatus().name() : null );
@@ -106,26 +106,26 @@ public class UploadMapperImpl implements UploadMapper {
 
         ValidationResultResponse.TableResultDetail.TableResultDetailBuilder tableResultDetail = ValidationResultResponse.TableResultDetail.builder();
 
+        tableResultDetail.id( r.getId() );
+        tableResultDetail.tableKey( r.getTableKey() );
+        tableResultDetail.tableName( r.getTableName() );
+        tableResultDetail.qualityScore( r.getQualityScore() );
+        tableResultDetail.rowCount( r.getRowCount() );
+        tableResultDetail.validRows( r.getValidRows() );
+        tableResultDetail.invalidRows( r.getInvalidRows() );
+        tableResultDetail.rulesChecked( r.getRulesChecked() );
+        tableResultDetail.rulesPassed( r.getRulesPassed() );
+        tableResultDetail.rulesFailed( r.getRulesFailed() );
         tableResultDetail.blockerCount( r.getBlockerCount() );
         Map<String, Object> map = r.getColumnStats();
         if ( map != null ) {
             tableResultDetail.columnStats( new LinkedHashMap<String, Object>( map ) );
         }
-        tableResultDetail.id( r.getId() );
-        tableResultDetail.invalidRows( r.getInvalidRows() );
-        tableResultDetail.qualityScore( r.getQualityScore() );
-        tableResultDetail.rowCount( r.getRowCount() );
-        tableResultDetail.ruleResults( validationRuleResultListToRuleResultDetailList( r.getRuleResults() ) );
-        tableResultDetail.rulesChecked( r.getRulesChecked() );
-        tableResultDetail.rulesFailed( r.getRulesFailed() );
-        tableResultDetail.rulesPassed( r.getRulesPassed() );
-        List<Map<String, Object>> list1 = r.getSampleData();
-        if ( list1 != null ) {
-            tableResultDetail.sampleData( new ArrayList<Map<String, Object>>( list1 ) );
+        List<Map<String, Object>> list = r.getSampleData();
+        if ( list != null ) {
+            tableResultDetail.sampleData( new ArrayList<Map<String, Object>>( list ) );
         }
-        tableResultDetail.tableKey( r.getTableKey() );
-        tableResultDetail.tableName( r.getTableName() );
-        tableResultDetail.validRows( r.getValidRows() );
+        tableResultDetail.ruleResults( validationRuleResultListToRuleResultDetailList( r.getRuleResults() ) );
 
         tableResultDetail.status( r.getStatus() != null ? r.getStatus().name() : null );
 
@@ -140,16 +140,16 @@ public class UploadMapperImpl implements UploadMapper {
 
         ValidationResultResponse.RuleResultDetail.RuleResultDetailBuilder ruleResultDetail = ValidationResultResponse.RuleResultDetail.builder();
 
-        ruleResultDetail.affectedPercent( r.getAffectedPercent() );
+        ruleResultDetail.ruleCode( r.getRuleCode() );
+        ruleResultDetail.targetColumn( r.getTargetColumn() );
+        ruleResultDetail.passed( r.getPassed() );
         ruleResultDetail.affectedRows( r.getAffectedRows() );
+        ruleResultDetail.affectedPercent( r.getAffectedPercent() );
         ruleResultDetail.errorMessage( r.getErrorMessage() );
         List<Map<String, Object>> list = r.getErrorSamples();
         if ( list != null ) {
             ruleResultDetail.errorSamples( new ArrayList<Map<String, Object>>( list ) );
         }
-        ruleResultDetail.passed( r.getPassed() );
-        ruleResultDetail.ruleCode( r.getRuleCode() );
-        ruleResultDetail.targetColumn( r.getTargetColumn() );
 
         ruleResultDetail.ruleType( r.getRuleType()  != null ? r.getRuleType().name()  : null );
         ruleResultDetail.severity( r.getSeverity()  != null ? r.getSeverity().name()  : null );
@@ -166,18 +166,18 @@ public class UploadMapperImpl implements UploadMapper {
         DatasetConfigResponse.DatasetConfigResponseBuilder datasetConfigResponse = DatasetConfigResponse.builder();
 
         datasetConfigResponse.tables( datasetTableListToTableInfoList( config.getTables() ) );
-        datasetConfigResponse.code( config.getCode() );
-        datasetConfigResponse.defaultTargetDbType( config.getDefaultTargetDbType() );
-        datasetConfigResponse.description( config.getDescription() );
         datasetConfigResponse.id( config.getId() );
-        datasetConfigResponse.isMultiTable( config.getIsMultiTable() );
-        datasetConfigResponse.isSensitive( config.getIsSensitive() );
-        datasetConfigResponse.maxFileSizeMb( config.getMaxFileSizeMb() );
-        datasetConfigResponse.minQualityScore( config.getMinQualityScore() );
+        datasetConfigResponse.code( config.getCode() );
         datasetConfigResponse.name( config.getName() );
-        datasetConfigResponse.regulatoryRef( config.getRegulatoryRef() );
-        datasetConfigResponse.requiresApproval( config.getRequiresApproval() );
+        datasetConfigResponse.description( config.getDescription() );
+        datasetConfigResponse.maxFileSizeMb( config.getMaxFileSizeMb() );
+        datasetConfigResponse.isMultiTable( config.getIsMultiTable() );
         datasetConfigResponse.structureType( config.getStructureType() );
+        datasetConfigResponse.defaultTargetDbType( config.getDefaultTargetDbType() );
+        datasetConfigResponse.requiresApproval( config.getRequiresApproval() );
+        datasetConfigResponse.regulatoryRef( config.getRegulatoryRef() );
+        datasetConfigResponse.minQualityScore( config.getMinQualityScore() );
+        datasetConfigResponse.isSensitive( config.getIsSensitive() );
 
         datasetConfigResponse.supportedFormats( splitFormats(config.getSupportedFormats()) );
 
@@ -192,14 +192,14 @@ public class UploadMapperImpl implements UploadMapper {
 
         DatasetConfigResponse.TableInfo.TableInfoBuilder tableInfo = DatasetConfigResponse.TableInfo.builder();
 
-        tableInfo.description( t.getDescription() );
         tableInfo.id( t.getId() );
-        tableInfo.ingestOrder( t.getIngestOrder() );
-        tableInfo.isRequired( t.getIsRequired() );
-        tableInfo.sourcePath( t.getSourcePath() );
         tableInfo.tableKey( t.getTableKey() );
         tableInfo.tableName( t.getTableName() );
+        tableInfo.description( t.getDescription() );
+        tableInfo.sourcePath( t.getSourcePath() );
         tableInfo.targetTable( t.getTargetTable() );
+        tableInfo.ingestOrder( t.getIngestOrder() );
+        tableInfo.isRequired( t.getIsRequired() );
 
         tableInfo.writeMode( t.getWriteMode() != null ? t.getWriteMode().name() : null );
         tableInfo.columnCount( t.getColumns() != null ? t.getColumns().size() : 0 );

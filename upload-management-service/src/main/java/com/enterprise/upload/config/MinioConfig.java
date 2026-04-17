@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MinioConfig {
 
-    @Value("${minio.endpoint}")
+    @Value("${minio.url}")
     private String endpoint;
 
     @Value("${minio.access-key}")

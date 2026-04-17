@@ -2,7 +2,6 @@ package com.enterprise.upload.service;
 
 import com.enterprise.upload.dto.request.*;
 import com.enterprise.upload.dto.response.*;
-import com.enterprise.upload.model.Upload;
 
 public interface UploadService {
     PresignedUrlResponse requestPresignedUrl(PresignedUrlRequest request, String userId);

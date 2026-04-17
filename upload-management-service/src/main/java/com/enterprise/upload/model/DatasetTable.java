@@ -5,7 +5,6 @@ import com.enterprise.upload.model.enums.WriteMode;
 // import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Type;
 
 import java.util.ArrayList;
 import java.util.List;

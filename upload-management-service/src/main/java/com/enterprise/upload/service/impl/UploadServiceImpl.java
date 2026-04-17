@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -32,7 +31,7 @@ public class UploadServiceImpl implements UploadService {
     private final UploadRepository           uploadRepository;
     private final PresignedUrlLogRepository  presignedUrlLogRepository;
     private final ValidationDatasetResultRepository validationRepository;
-    private final IngestionJobRepository     ingestionJobRepository;
+    // private final IngestionJobRepository     ingestionJobRepository;
     private final MinioService               minioService;
     private final KafkaPublisherService      kafkaPublisherService;
     private final UploadEventService         uploadEventService;
@@ -123,7 +122,7 @@ public class UploadServiceImpl implements UploadService {
             throw new InvalidUploadStateException(
                 "Upload already confirmed or in state: " + upload.getStatus());
         }
-        if (upload.isPresignedUrlExpired()) {
+        if (upload.isExpiredPresignedUrl()) {
             upload.setStatus(UploadStatus.EXPIRED);
             uploadRepository.save(upload);
             throw new InvalidUploadStateException("Presigned URL has expired for upload: " + uploadId);

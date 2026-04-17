@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Type;
 
-import java.net.InetAddress;
+// import java.net.InetAddress;
 import java.time.LocalDateTime;
 import java.util.Map;
 

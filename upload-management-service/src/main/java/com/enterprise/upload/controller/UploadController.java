@@ -5,7 +5,7 @@ import com.enterprise.upload.dto.response.*;
 import com.enterprise.upload.security.UserPrincipal;
 import com.enterprise.upload.service.UploadService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
+// import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
