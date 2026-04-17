@@ -1,6 +1,6 @@
 package com.enterprise.upload.kafka;
 
-import com.enterprise.upload.model.UploadStatus;
+import com.enterprise.upload.model.enums.UploadStatus;
 import com.enterprise.upload.repository.UploadRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

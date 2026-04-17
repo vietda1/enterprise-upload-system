@@ -1,102 +1,155 @@
 package com.enterprise.upload.controller;
 
-import com.enterprise.upload.dto.*;
+import com.enterprise.upload.dto.request.*;
+import com.enterprise.upload.dto.response.*;
+import com.enterprise.upload.security.UserPrincipal;
 import com.enterprise.upload.service.UploadService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/uploads")
 @RequiredArgsConstructor
-@Slf4j
-@CrossOrigin(origins = "*")
+@Tag(name = "Upload Management", description = "APIs for managing enterprise file uploads")
 public class UploadController {
-    
+
     private final UploadService uploadService;
-    
+
+    // ── 1. Request presigned URL ──────────────────────────────────────────────
+
     @PostMapping("/presigned-url")
-    public ResponseEntity<PresignedUrlResponse> getPresignedUrl(
+    @Operation(summary = "Request a presigned URL to upload a file directly to MinIO")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<PresignedUrlResponse>> requestPresignedUrl(
             @Valid @RequestBody PresignedUrlRequest request,
-            @RequestHeader("X-User-Id") String userId) {
-        
-        log.info("Received presigned URL request from user: {}", userId);
-        PresignedUrlResponse response = uploadService.generatePresignedUrl(request, userId);
-        return ResponseEntity.ok(response);
+            @AuthenticationPrincipal UserPrincipal principal) {
+
+        PresignedUrlResponse response = uploadService.requestPresignedUrl(request, principal.getUserId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok("Presigned URL generated", response));
     }
-    
+
+    // ── 2. Confirm upload ─────────────────────────────────────────────────────
+
     @PostMapping("/{uploadId}/confirm")
-    public ResponseEntity<Void> confirmUpload(
+    @Operation(summary = "Confirm file has been uploaded to MinIO and trigger validation")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<UploadResponse>> confirmUpload(
             @PathVariable String uploadId,
-            @RequestHeader("X-User-Id") String userId) {
-        
-        log.info("Confirming upload: {} by user: {}", uploadId, userId);
-        uploadService.confirmUpload(uploadId);
-        return ResponseEntity.ok().build();
+            @Valid @RequestBody ConfirmUploadRequest request,
+            @AuthenticationPrincipal UserPrincipal principal) {
+
+        UploadResponse response = uploadService.confirmUpload(uploadId, request, principal.getUserId());
+        return ResponseEntity.ok(ApiResponse.ok("Upload confirmed, validation started", response));
     }
-    
-    @GetMapping("/{uploadId}/status")
-    public ResponseEntity<UploadResponse> getUploadStatus(
+
+    // ── 3. Get upload ─────────────────────────────────────────────────────────
+
+    @GetMapping("/{uploadId}")
+    @Operation(summary = "Get upload details by uploadId")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<UploadResponse>> getUpload(
             @PathVariable String uploadId,
-            @RequestHeader("X-User-Id") String userId) {
-        
-        UploadResponse response = uploadService.getUploadStatus(uploadId, userId);
-        return ResponseEntity.ok(response);
+            @AuthenticationPrincipal UserPrincipal principal) {
+
+        return ResponseEntity.ok(ApiResponse.ok(uploadService.getUpload(uploadId, principal.getUserId())));
     }
-    
+
+    // ── 4. Search / list uploads ──────────────────────────────────────────────
+
     @GetMapping
-    public ResponseEntity<Page<UploadResponse>> listUploads(
-            @RequestHeader("X-User-Id") String userId,
-            @RequestHeader(value = "X-User-Department", required = false) String department,
-            @ModelAttribute UploadFilterRequest filter) {
-        
-        Page<UploadResponse> uploads = uploadService.listUploads(userId, department, filter);
-        return ResponseEntity.ok(uploads);
+    @Operation(summary = "Search and list uploads with filters and pagination")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<UploadPageResponse>> searchUploads(
+            @ModelAttribute UploadSearchRequest request,
+            @AuthenticationPrincipal UserPrincipal principal) {
+
+        return ResponseEntity.ok(ApiResponse.ok(uploadService.searchUploads(request, principal.getUserId())));
     }
-    
-    @GetMapping("/accessible")
-    public ResponseEntity<Page<UploadResponse>> getAccessibleUploads(
-            @RequestHeader("X-User-Id") String userId,
-            @RequestHeader("X-User-Department") String department,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        
-        Page<UploadResponse> uploads = uploadService.getAccessibleUploads(
-            userId, 
-            department, 
-            PageRequest.of(page, size)
-        );
-        return ResponseEntity.ok(uploads);
+
+    // ── 5. Approve ────────────────────────────────────────────────────────────
+
+    @PostMapping("/{uploadId}/approve")
+    @Operation(summary = "Approve an upload (Checker / Dept Manager)")
+    @PreAuthorize("hasAnyRole('ROLE_DEPARTMENT_MANAGER', 'ROLE_ADMIN')")
+    public ResponseEntity<ApiResponse<UploadResponse>> approveUpload(
+            @PathVariable String uploadId,
+            @RequestBody(required = false) ApproveUploadRequest request,
+            @AuthenticationPrincipal UserPrincipal principal) {
+
+        ApproveUploadRequest req = request != null ? request : new ApproveUploadRequest();
+        return ResponseEntity.ok(ApiResponse.ok("Upload approved", uploadService.approveUpload(uploadId, req, principal.getUserId())));
     }
-    
+
+    // ── 6. Reject ─────────────────────────────────────────────────────────────
+
+    @PostMapping("/{uploadId}/reject")
+    @Operation(summary = "Reject an upload (Checker / Dept Manager)")
+    @PreAuthorize("hasAnyRole('ROLE_DEPARTMENT_MANAGER', 'ROLE_ADMIN')")
+    public ResponseEntity<ApiResponse<UploadResponse>> rejectUpload(
+            @PathVariable String uploadId,
+            @Valid @RequestBody RejectUploadRequest request,
+            @AuthenticationPrincipal UserPrincipal principal) {
+
+        return ResponseEntity.ok(ApiResponse.ok("Upload rejected", uploadService.rejectUpload(uploadId, request, principal.getUserId())));
+    }
+
+    // ── 7. Delete ─────────────────────────────────────────────────────────────
+
     @DeleteMapping("/{uploadId}")
-    public ResponseEntity<Void> deleteUpload(
+    @Operation(summary = "Soft-delete an upload")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<Void>> deleteUpload(
             @PathVariable String uploadId,
-            @RequestHeader("X-User-Id") String userId) {
-        
-        uploadService.deleteUpload(uploadId, userId);
-        return ResponseEntity.noContent().build();
+            @AuthenticationPrincipal UserPrincipal principal) {
+
+        uploadService.deleteUpload(uploadId, principal.getUserId());
+        return ResponseEntity.ok(ApiResponse.ok("Upload deleted", null));
     }
-    
-    @GetMapping("/stats")
-    public ResponseEntity<UploadStatsResponse> getUploadStats(
-            @RequestHeader("X-User-Id") String userId) {
-        
-        UploadStatsResponse stats = uploadService.getUploadStats(userId);
-        return ResponseEntity.ok(stats);
-    }
-    
-    @GetMapping("/{uploadId}/download-url")
-    public ResponseEntity<Map<String, String>> getDownloadUrl(
+
+    // ── 8. Share ──────────────────────────────────────────────────────────────
+
+    @PostMapping("/{uploadId}/share")
+    @Operation(summary = "Share upload access with another user or department")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<UploadResponse>> shareUpload(
             @PathVariable String uploadId,
-            @RequestHeader("X-User-Id") String userId) {
-        
-        String downloadUrl = uploadService.getDownloadUrl(uploadId, userId);
-        return ResponseEntity.ok(Map.of("downloadUrl", downloadUrl));
+            @Valid @RequestBody ShareUploadRequest request,
+            @AuthenticationPrincipal UserPrincipal principal) {
+
+        return ResponseEntity.ok(ApiResponse.ok("Upload shared", uploadService.shareUpload(uploadId, request, principal.getUserId())));
+    }
+
+    // ── 9. Get validation result ──────────────────────────────────────────────
+
+    @GetMapping("/{uploadId}/validation")
+    @Operation(summary = "Get latest validation result for an upload")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<ValidationResultResponse>> getValidationResult(
+            @PathVariable String uploadId) {
+
+        return ResponseEntity.ok(ApiResponse.ok(uploadService.getValidationResult(uploadId)));
+    }
+
+    // ── 10. Get upload status ─────────────────────────────────────────────────
+
+    @GetMapping("/{uploadId}/status")
+    @Operation(summary = "Get current status of an upload")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<String>> getStatus(
+            @PathVariable String uploadId,
+            @AuthenticationPrincipal UserPrincipal principal) {
+
+        UploadResponse upload = uploadService.getUpload(uploadId, principal.getUserId());
+        return ResponseEntity.ok(ApiResponse.ok(upload.getStatus().name()));
     }
 }

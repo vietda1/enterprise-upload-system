@@ -10,43 +10,74 @@ spring:
     name: upload-management-service
   
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:upload_db}
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:Msb@2026}
+    url: jdbc:postgresql://${DB_HOST:10.0.137.152}:${DB_PORT:5445}/${DB_NAME:dataupload_sit}?currentSchema=upload_db
+    username: ${DB_USERNAME:upload_mgt}
+    password: ${DB_PASSWORD:upload_mgt#uat}
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 10
+      maximum-pool-size: 20
       minimum-idle: 5
       connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      pool-name: UploadHikariPool
   
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate #update/none
     show-sql: true
     properties:
       hibernate:
-        format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: upload_db
+        format_sql: true
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
   
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:10.0.145.173:9092,10.0.145.174:9092,10.0.145.175:9092}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 3
+      properties:
+        enable.idempotence: true
+        max.in.flight.requests.per.connection: 5
     consumer:
-      group-id: upload-service-group
-      auto-offset-reset: earliest
+      group-id: upload-management-service
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      auto-offset-reset: earliest
       properties:
-        spring.json.trusted.packages: "*"
+        spring.json.trusted.packages: "com.enterprise.upload.*"
 
 minio:
-  url: ${MINIO_URL:http://localhost:9000}
-  access-key: ${MINIO_ACCESS_KEY:minioadmin}
-  secret-key: ${MINIO_SECRET_KEY:minioadmin}
-  bucket-name: enterprise-uploads
+  url: ${MINIO_URL:https://ecs-hdd-nonprod.msb.com.vn}
+  access-key: ${MINIO_ACCESS_KEY:AKIAF1820A699FC288B5}
+  secret-key: ${MINIO_SECRET_KEY:oLYqw62aXOXBKcAk6GeU01ha2/Oqrn3lY8GoKuT9}
+  bucket-name: dll-dip-nonprod
   presigned-url-expiry: 3600
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+  expiration: ${JWT_EXPIRATION:86400000}
+
+# Kafka Topics
+kafka:
+  topics:
+    upload-completed: upload.completed
+    validation-completed: validation.completed
+    ingestion-completed: ingestion.completed
+
+# Upload Configuration
+upload:
+  max-file-size-mb: ${UPLOAD_MAX_FILE_SIZE:1024}
+  allowed-extensions: csv,json,xml,parquet,xlsx
+  presigned-url-expiry-minutes: 15
 
 management:
   endpoints:
@@ -56,6 +87,13 @@ management:
   endpoint:
     health:
       show-details: always
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
 
 logging:
   level:

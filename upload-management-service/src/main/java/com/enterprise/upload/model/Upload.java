@@ -1,165 +1,280 @@
 package com.enterprise.upload.model;
 
+import com.enterprise.upload.model.enums.UploadStatus;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.*;
+import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+/**
+ * Entity chính đại diện cho một lần upload file.
+ *
+ * <p>Mapping: {@code upload_db.uploads}
+ *
+ * <p>Lưu ý: bảng có 2 trigger DB-level:
+ * <ul>
+ *   <li>{@code trg_uploads_updated_at}         – tự cập nhật {@code updated_at}</li>
+ *   <li>{@code trg_log_upload_status_change}   – ghi log vào {@code upload_history}</li>
+ * </ul>
+ */
 @Entity
-@Table(name = "uploads", indexes = {
-    @Index(name = "idx_user_id", columnList = "userId"),
-    @Index(name = "idx_status", columnList = "status"),
-    @Index(name = "idx_department", columnList = "department"),
-    @Index(name = "idx_created_at", columnList = "createdAt")
-})
-@EntityListeners(AuditingEntityListener.class)
-@Data
+@Table(
+    schema = "upload_db",
+    name   = "uploads",
+    uniqueConstraints = @UniqueConstraint(
+        name        = "uploads_upload_id_key",
+        columnNames = "upload_id"
+    )
+)
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Upload {
-    
+
+    // ─── Primary Key ─────────────────────────────────────────────────────────
+
     @Id
-    @Column(length = 36)
-    private String id;
-    
-    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", nullable = false, updatable = false, columnDefinition = "uuid")
+    private UUID id;
+
+    // ─── Identity ────────────────────────────────────────────────────────────
+
+    /**
+     * Business key hiển thị, dạng UPL-YYYY-NNNN.
+     * Unique, immutable sau khi tạo.
+     */
+    @Column(name = "upload_id", nullable = false, length = 100, unique = true, updatable = false)
+    private String uploadId;
+
+    @Column(name = "user_id", nullable = false, length = 100)
     private String userId;
-    
-    @Column(nullable = false, length = 500)
+
+    @Column(name = "department_id", length = 50)
+    private String departmentId;
+
+    // ─── File info ───────────────────────────────────────────────────────────
+
+    @Column(name = "file_name", nullable = false, length = 500)
     private String fileName;
-    
-    @Column(nullable = false, length = 100)
-    private String fileType;
-    
-    @Column
+
+    @Column(name = "original_file_name", length = 500)
+    private String originalFileName;
+
+    /** Kích thước file tính bằng bytes */
+    @Column(name = "file_size")
     private Long fileSize;
-    
-    @Column(nullable = false, length = 1000)
+
+    /** Extension: CSV, JSON, XML, PARQUET... */
+    @Column(name = "file_type", length = 50)
+    private String fileType;
+
+    @Column(name = "mime_type", length = 200)
+    private String mimeType;
+
+    // ─── Object Storage ──────────────────────────────────────────────────────
+
+    /** Object key trong MinIO/S3, e.g. uploads/2026/01/DEPT/user/UPL-xxx/file.csv */
+    @Column(name = "object_key", nullable = false, length = 1000)
     private String objectKey;
-    
-    @Column(nullable = false)
-    private String bucketName;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 50)
-    private UploadStatus status;
-    
-    @Column(nullable = false, length = 100)
-    private String department;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 50)
-    private AccessLevel accessLevel;
-    
-    @Column(nullable = false, length = 100)
+
+    @Column(name = "bucket_name", length = 200)
+    @Builder.Default
+    private String bucketName = "enterprise-uploads";
+
+    /** ETag trả về từ MinIO/S3 sau khi upload thành công */
+    @Column(name = "etag", length = 200)
+    private String etag;
+
+    // ─── Dataset / Target ────────────────────────────────────────────────────
+
+    /** Mã loại dataset, tham chiếu logic đến DatasetConfig.code */
+    @Column(name = "dataset_type", length = 50)
     private String datasetType;
-    
-    @Column(nullable = false, length = 500)
+
+    @Column(name = "target_database", length = 500)
     private String targetDatabase;
-    
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(
-        name = "upload_metadata",
-        joinColumns = @JoinColumn(name = "upload_id")
-    )
-    @MapKeyColumn(name = "meta_key", length = 255)
-    @Column(name = "meta_value", columnDefinition = "TEXT")
-    private Map<String, String> metadata = new HashMap<>();
-    
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
+
+    @Column(name = "target_table", length = 200)
+    private String targetTable;
+
+    // ─── User-supplied info ───────────────────────────────────────────────────
+
+    @Column(name = "description", columnDefinition = "text")
+    private String description;
+
+    /** Tags dạng JSONB tự do, e.g. {"month":"2026-01","batch":1} */
+    @Type(JsonBinaryType.class)
+    @Column(name = "tags", columnDefinition = "jsonb")
+    private Map<String, Object> tags;
+
+    /** Metadata bổ sung dạng JSONB */
+    @Type(JsonBinaryType.class)
+    @Column(name = "metadata", columnDefinition = "jsonb")
+    private Map<String, Object> metadata;
+
+    // ─── Status & Workflow ───────────────────────────────────────────────────
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 50)
+    @Builder.Default
+    private UploadStatus status = UploadStatus.PENDING;
+
+    // Rejection
+    @Column(name = "rejection_reason", columnDefinition = "text")
+    private String rejectionReason;
+
+    @Column(name = "rejected_by", length = 100)
+    private String rejectedBy;
+
+    @Column(name = "rejected_at")
+    private LocalDateTime rejectedAt;
+
+    // Approval
+    @Column(name = "approved_by", length = 100)
+    private String approvedBy;
+
+    @Column(name = "approved_at")
+    private LocalDateTime approvedAt;
+
+    // Presigned URL
+    @Column(name = "presigned_url_expires_at")
+    private LocalDateTime presignedUrlExpiresAt;
+
+    // ─── Timestamps ──────────────────────────────────────────────────────────
+
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-    
-    @LastModifiedDate
-    @Column
+
+    /**
+     * Cập nhật tự động qua DB trigger {@code trg_uploads_updated_at}.
+     * Không dùng @PreUpdate để tránh conflict với trigger.
+     */
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    
-    @Column
-    private LocalDateTime uploadedAt;
-    
-    @Column
-    private LocalDateTime validatedAt;
-    
-    @Column
-    private LocalDateTime ingestedAt;
-    
-    @Column(columnDefinition = "TEXT")
-    private String validationResult;
-    
-    @Column(columnDefinition = "TEXT")
-    private String ingestionResult;
-    
-    @Column(length = 500)
-    private String errorMessage;
-    
-    @Version
-    private Long version;
-    
-    // Getters and Setters
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
 
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
+    @Column(name = "completed_at")
+    private LocalDateTime completedAt;
 
-    public String getFileName() { return fileName; }
-    public void setFileName(String fileName) { this.fileName = fileName; }
+    /** Soft-delete timestamp */
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
-    public String getFileType() { return fileType; }
-    public void setFileType(String fileType) { this.fileType = fileType; }
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
 
-    public Long getFileSize() { return fileSize; }
-    public void setFileSize(Long fileSize) { this.fileSize = fileSize; }
+    // ─── Relationships ────────────────────────────────────────────────────────
 
-    public String getObjectKey() { return objectKey; }
-    public void setObjectKey(String objectKey) { this.objectKey = objectKey; }
+    @OneToMany(
+        mappedBy      = "upload",
+        cascade       = CascadeType.ALL,
+        orphanRemoval = true,
+        fetch         = FetchType.LAZY
+    )
+    @OrderBy("created_at ASC")
+    @Builder.Default
+    private List<UploadEvent> events = new ArrayList<>();
 
-    public String getBucketName() { return bucketName; }
-    public void setBucketName(String bucketName) { this.bucketName = bucketName; }
+    @OneToMany(
+        mappedBy      = "upload",
+        cascade       = CascadeType.ALL,
+        orphanRemoval = true,
+        fetch         = FetchType.LAZY
+    )
+    @OrderBy("changed_at DESC")
+    @Builder.Default
+    private List<UploadHistory> history = new ArrayList<>();
 
-    public UploadStatus getStatus() { return status; }
-    public void setStatus(UploadStatus status) { this.status = status; }
+    @OneToMany(
+        mappedBy      = "upload",
+        cascade       = CascadeType.ALL,
+        orphanRemoval = true,
+        fetch         = FetchType.LAZY
+    )
+    @Builder.Default
+    private List<UploadMetadata> metadataEntries = new ArrayList<>();
 
-    public String getDepartment() { return department; }
-    public void setDepartment(String department) { this.department = department; }
+    @OneToMany(
+        mappedBy      = "upload",
+        cascade       = CascadeType.ALL,
+        orphanRemoval = true,
+        fetch         = FetchType.LAZY
+    )
+    @Builder.Default
+    private List<UploadTag> uploadTags = new ArrayList<>();
 
-    public AccessLevel getAccessLevel() { return accessLevel; }
-    public void setAccessLevel(AccessLevel accessLevel) { this.accessLevel = accessLevel; }
+    @OneToMany(
+        mappedBy      = "upload",
+        cascade       = CascadeType.ALL,
+        orphanRemoval = true,
+        fetch         = FetchType.LAZY
+    )
+    @Builder.Default
+    private List<UploadShare> shares = new ArrayList<>();
 
-    public String getDatasetType() { return datasetType; }
-    public void setDatasetType(String datasetType) { this.datasetType = datasetType; }
+    @OneToMany(
+        mappedBy = "upload",
+        fetch    = FetchType.LAZY
+    )
+    @OrderBy("created_at DESC")
+    @Builder.Default
+    private List<IngestionJob> ingestionJobs = new ArrayList<>();
 
-    public String getTargetDatabase() { return targetDatabase; }
-    public void setTargetDatabase(String targetDatabase) { this.targetDatabase = targetDatabase; }
+    @OneToMany(
+        mappedBy = "upload",
+        fetch    = FetchType.LAZY
+    )
+    @OrderBy("created_at DESC")
+    @Builder.Default
+    private List<ValidationDatasetResult> validationResults = new ArrayList<>();
 
-    public Map<String, String> getMetadata() { return metadata; }
-    public void setMetadata(Map<String, String> metadata) { this.metadata = metadata; }
+    // ─── Business helpers ────────────────────────────────────────────────────
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public boolean isExpiredPresignedUrl() {
+        return presignedUrlExpiresAt != null
+            && LocalDateTime.now().isAfter(presignedUrlExpiresAt);
+    }
 
-    public LocalDateTime getUploadedAt() { return uploadedAt; }
-    public void setUploadedAt(LocalDateTime uploadedAt) { this.uploadedAt = uploadedAt; }
+    public boolean isSoftDeleted() {
+        return deletedAt != null;
+    }
 
-    public LocalDateTime getValidatedAt() { return validatedAt; }
-    public void setValidatedAt(LocalDateTime validatedAt) { this.validatedAt = validatedAt; }
+    public boolean isTerminalStatus() {
+        return status == UploadStatus.COMPLETED
+            || status == UploadStatus.FAILED
+            || status == UploadStatus.REJECTED
+            || status == UploadStatus.VALIDATION_FAILED
+            || status == UploadStatus.EXPIRED
+            || status == UploadStatus.DELETED;
+    }
 
-    public LocalDateTime getIngestedAt() { return ingestedAt; }
-    public void setIngestedAt(LocalDateTime ingestedAt) { this.ingestedAt = ingestedAt; }
+    public void addEvent(UploadEvent event) {
+        events.add(event);
+        event.setUpload(this);
+    }
 
-    public String getValidationResult() { return validationResult; }
-    public void setValidationResult(String validationResult) { this.validationResult = validationResult; }
+    public void addTag(UploadTag tag) {
+        uploadTags.add(tag);
+        tag.setUpload(this);
+    }
 
-    public String getIngestionResult() { return ingestionResult; }
-    public void setIngestionResult(String ingestionResult) { this.ingestionResult = ingestionResult; } 
-    
-    public String getErrorMessage() { return errorMessage; }
-    public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }                          
+    public void addMetadata(UploadMetadata meta) {
+        metadataEntries.add(meta);
+        meta.setUpload(this);
+    }
+
+    public void addShare(UploadShare share) {
+        shares.add(share);
+        share.setUpload(this);
+    }
 }
