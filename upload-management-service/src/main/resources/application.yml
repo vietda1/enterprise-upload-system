@@ -52,14 +52,17 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       auto-offset-reset: earliest
       properties:
-        spring.json.trusted.packages: "com.enterprise.upload.*"
+        spring.json.trusted.packages: "com.msb.upload.*"
 
-minio:
-  url: ${MINIO_URL:https://ecs-hdd-nonprod.msb.com.vn}
-  access-key: ${MINIO_ACCESS_KEY:AKIAF1820A699FC288B5}
-  secret-key: ${MINIO_SECRET_KEY:oLYqw62aXOXBKcAk6GeU01ha2/Oqrn3lY8GoKuT9}
-  bucket-name: dll-dip-nonprod
-  presigned-url-expiry: 3600
+aws:
+  s3:
+    access-key: ${AWS_ACCESS_KEY:AKIAF1820A699FC288B5}
+    secret-key: ${AWS_SECRET_KEY:oLYqw62aXOXBKcAk6GeU01ha2/Oqrn3lY8GoKuT9}
+    region: ${AWS_REGION:us-east-1}          # ECS ignores region — any value works
+    bucket-name: ${AWS_BUCKET_NAME:dll-dip-nonprod}
+    presigned-url-expiry-minutes: 15
+    endpoint: ${AWS_ENDPOINT:https://ecs-hdd-nonprod.msb.com.vn}  # Dell EMC ECS endpoint
+    path-style-access: true                  # Required for Dell EMC ECS
 
 # JWT Configuration
 jwt:
@@ -98,4 +101,4 @@ springdoc:
 logging:
   level:
     root: INFO
-    com.enterprise.upload: DEBUG
+    com.msb.upload: DEBUG

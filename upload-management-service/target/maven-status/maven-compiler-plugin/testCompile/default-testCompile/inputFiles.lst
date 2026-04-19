@@ -1,1 +1,12 @@
-C:\Users\65dqh\Downloads\API\Claude-upload\enterprise-upload-system\upload-management-service\src\test\java\com\enterprise\AppTest.java
+C:\Users\65dqh\Downloads\API\Claude-upload\enterprise-upload-system\upload-management-service\src\test\java\com\msb\AppTest.java
+C:\Users\65dqh\Downloads\API\Claude-upload\enterprise-upload-system\upload-management-service\src\test\java\com\msb\upload\controller\DatasetConfigControllerTest.java
+C:\Users\65dqh\Downloads\API\Claude-upload\enterprise-upload-system\upload-management-service\src\test\java\com\msb\upload\controller\UploadControllerTest.java
+C:\Users\65dqh\Downloads\API\Claude-upload\enterprise-upload-system\upload-management-service\src\test\java\com\msb\upload\helper\TestJwtHelper.java
+C:\Users\65dqh\Downloads\API\Claude-upload\enterprise-upload-system\upload-management-service\src\test\java\com\msb\upload\kafka\UploadEventConsumerTest.java
+C:\Users\65dqh\Downloads\API\Claude-upload\enterprise-upload-system\upload-management-service\src\test\java\com\msb\upload\service\DatasetConfigServiceTest.java
+C:\Users\65dqh\Downloads\API\Claude-upload\enterprise-upload-system\upload-management-service\src\test\java\com\msb\upload\service\KafkaPublisherServiceTest.java
+C:\Users\65dqh\Downloads\API\Claude-upload\enterprise-upload-system\upload-management-service\src\test\java\com\msb\upload\service\MinioServiceTest.java
+C:\Users\65dqh\Downloads\API\Claude-upload\enterprise-upload-system\upload-management-service\src\test\java\com\msb\upload\service\MultipartInitiateTest.java
+C:\Users\65dqh\Downloads\API\Claude-upload\enterprise-upload-system\upload-management-service\src\test\java\com\msb\upload\service\UploadEventServiceTest.java
+C:\Users\65dqh\Downloads\API\Claude-upload\enterprise-upload-system\upload-management-service\src\test\java\com\msb\upload\service\UploadSchedulerServiceTest.java
+C:\Users\65dqh\Downloads\API\Claude-upload\enterprise-upload-system\upload-management-service\src\test\java\com\msb\upload\service\UploadServiceTest.java

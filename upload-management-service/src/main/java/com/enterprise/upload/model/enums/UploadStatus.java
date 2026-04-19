@@ -1,7 +1,0 @@
-package com.enterprise.upload.model.enums;
-
-public enum UploadStatus {
-    PENDING, UPLOADED, VALIDATED, VALIDATION_FAILED,
-    PENDING_APPROVAL, APPROVED, REJECTED,
-    INGESTING, COMPLETED, FAILED, EXPIRED, DELETED
-}

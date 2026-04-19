@@ -12,7 +12,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.enterprise</groupId>
+    <groupId>com.msb</groupId>
     <artifactId>upload-management-service</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
@@ -22,7 +22,7 @@
     <properties>
         <java.version>21</java.version>
         <hypersistence.version>3.7.3</hypersistence.version>
-        <minio.version>8.5.11</minio.version>
+        <aws.sdk.version>2.26.12</aws.sdk.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok.version>1.18.34</lombok.version>
         <springdoc.version>2.6.0</springdoc.version>
@@ -71,11 +71,11 @@
             <version>${hypersistence.version}</version>
         </dependency>
 
-        <!-- MinIO -->
+        <!-- AWS SDK v2 S3 -->
         <dependency>
-            <groupId>io.minio</groupId>
-            <artifactId>minio</artifactId>
-            <version>${minio.version}</version>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>${aws.sdk.version}</version>
         </dependency>
 
         <!-- JWT -->
